@@ -2,9 +2,10 @@
   "name": "api_endpoint",
   "version": "1.0.0",
   "description": "Data enrichment API endpoint",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "dev": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,8 @@
   },
   "homepage": "https://github.com/pagreda888/relish_technical_test#readme",
   "dependencies": {
+    "axios": "^1.10.0",
+    "dotenv": "^17.0.0",
     "express": "^5.1.0"
   }
 }
