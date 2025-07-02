@@ -6,7 +6,7 @@ app.use(express.json());
 
 // external API fetch, here we retreive all data, and its mapped for a better ID lookup
 // before, each get to the 3 endpoints was individual, now we use Promise.all to fetch all data at once, in parallel
-// separated functions for a better code structure 
+// separated functions for a better code structure
 async function collectData(API_URL) {
   const [userRes, albumRes, photoRes] = await Promise.all([
     axios.get(`${API_URL}/users`),
@@ -71,7 +71,10 @@ function gatherAllData(photoData, albumMap, userMap) {
 app.get("/externalapi/photos/:photo_id", async (request, response) => {
   try {
     const API_URL = process.env.API_URL;
-    if (!API_URL) return response.status(500).json({ error: "API_URL not defined in environment" });
+    if (!API_URL)
+      return response
+        .status(500)
+        .json({ error: "API_URL not defined in environment" });
 
     //data collection, photos, albums and users
     const { photo_id } = request.params;
@@ -79,13 +82,13 @@ app.get("/externalapi/photos/:photo_id", async (request, response) => {
 
     // validating the photo_id
     const photoIdInt = parseInt(photo_id, 10);
-    const photoData = photos.find(p => p.id === photoIdInt);
-    if (!photoData) return response.status(404).json({ error: "Photo not found" });
+    const photoData = photos.find((p) => p.id === photoIdInt);
+    if (!photoData)
+      return response.status(404).json({ error: "Photo not found" });
 
     // gathering all data related to the photo
     const enriched = gatherAllData(photoData, albumMap, userMap);
     return response.json(enriched);
-    
   } catch (error) {
     console.error("Error processing request:", error.message);
     response.status(500).json({ error: "Error processing request" });
@@ -96,17 +99,54 @@ app.get("/externalapi/photos/:photo_id", async (request, response) => {
 app.get("/externalapi/photos", async (request, response) => {
   try {
     const API_URL = process.env.API_URL;
-    if (!API_URL) return response.status(500).json({ error: "API_URL not defined in environment" });
-    
+    if (!API_URL)
+      return response
+        .status(500)
+        .json({ error: "API_URL not defined in environment" });
+
     //data collection, photos, albums and users
     const { photos, albumMap, userMap } = await collectData(API_URL);
-    
+
     // gathering all data related to the photo
-    const enrichedPhotos = await Promise.all(
-      photos.map(photoData => gatherAllData(photoData, albumMap, userMap))
+    let enrichedPhotos = await Promise.all(
+      photos.map((photoData) => gatherAllData(photoData, albumMap, userMap))
     );
 
-    response.json(enrichedPhotos);
+    // code section for filter the search
+    const {
+      title,
+      "album.title": albumTitle,
+      "album.user.email": userEmail,
+      limit = 25,
+      offset = 0,
+    } = request.query;
+
+    //filter by name or title of the photo
+    if (title) {
+      enrichedPhotos = enrichedPhotos.filter((p) => p.title.includes(title));
+    }
+    // filter by album name or title
+    if (albumTitle) {
+      enrichedPhotos = enrichedPhotos.filter((p) =>
+        p.album?.title.includes(albumTitle)
+      );
+    }
+    // filter by user email
+    if (userEmail) {
+      enrichedPhotos = enrichedPhotos.filter(
+        (p) => p.album?.user?.email === userEmail
+      );
+    }
+
+    // pagination(using the slice function to create subarrays of the whole data)
+    const paginated = enrichedPhotos.slice(
+      parseInt(offset),
+      parseInt(offset) + parseInt(limit)
+    );
+
+    // response with the data
+     response.json({total: enrichedPhotos.length, limit: parseInt(limit), offset: parseInt(offset), data: paginated,});
+
   } catch (error) {
     console.error("Error processing request:", error.message);
     response.status(500).json({ error: "Error processing request" });
