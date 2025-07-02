@@ -1,0 +1,25 @@
+{
+  "name": "api_endpoint",
+  "version": "1.0.0",
+  "description": "Data enrichment API endpoint",
+  "main": "app.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pagreda888/relish_technical_test.git"
+  },
+  "author": "Pablo Agreda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pagreda888/relish_technical_test/issues"
+  },
+  "homepage": "https://github.com/pagreda888/relish_technical_test#readme",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0"
+  }
+}
