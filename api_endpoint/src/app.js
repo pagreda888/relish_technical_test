@@ -117,8 +117,10 @@ app.get("/externalapi/photos", async (request, response) => {
       title,
       "album.title": albumTitle,
       "album.user.email": userEmail,
+      limit = 25,
+      offset = 0,
     } = request.query;
-    
+
     //filter by name or title of the photo
     if (title) {
       enrichedPhotos = enrichedPhotos.filter((p) => p.title.includes(title));
@@ -136,7 +138,15 @@ app.get("/externalapi/photos", async (request, response) => {
       );
     }
 
-    response.json(enrichedPhotos);
+    // pagination(using the slice function to create subarrays of the whole data)
+    const paginated = enrichedPhotos.slice(
+      parseInt(offset),
+      parseInt(offset) + parseInt(limit)
+    );
+
+    // response with the data
+     response.json({total: enrichedPhotos.length, limit: parseInt(limit), offset: parseInt(offset), data: paginated,});
+
   } catch (error) {
     console.error("Error processing request:", error.message);
     response.status(500).json({ error: "Error processing request" });
