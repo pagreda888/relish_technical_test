@@ -129,32 +129,47 @@ app.get("/externalapi/photos", async (request, response) => {
       offset = 0,
     } = request.query;
 
-    //filter by name or title of the photo
+    // filter by name or title of the photo
     if (title) {
-      enrichedPhotos = enrichedPhotos.filter((p) => p.title.includes(title));
-    }
-    // filter by album name or title
-    if (albumTitle) {
+      const lowerTitle = title.toLowerCase();
       enrichedPhotos = enrichedPhotos.filter((p) =>
-        p.album?.title.includes(albumTitle)
-      );
-    }
-    // filter by user email
-    if (userEmail) {
-      enrichedPhotos = enrichedPhotos.filter(
-        (p) => p.album?.user?.email === userEmail
+        p.title.toLowerCase().includes(lowerTitle)
       );
     }
 
-    // pagination(using the slice function to create subarrays of the whole data)
+    // filter by album name or title
+    if (albumTitle) {
+      const lowerAlbum = albumTitle.toLowerCase();
+      enrichedPhotos = enrichedPhotos.filter((p) =>
+        p.album?.title.toLowerCase().includes(lowerAlbum)
+      );
+    }
+
+    // filter by user email
+    if (userEmail) {
+      const lowerEmail = userEmail.toLowerCase();
+      enrichedPhotos = enrichedPhotos.filter(
+        (p) => p.album?.user?.email.toLowerCase() === lowerEmail
+      );
+    }
+
+    // total después de filtrar pero antes de paginar
+    const totalFiltered = enrichedPhotos.length;
+
+    // paginación
     const paginated = enrichedPhotos.slice(
       parseInt(offset),
       parseInt(offset) + parseInt(limit)
     );
 
-    // response with the data
-     response.json({total: enrichedPhotos.length, limit: parseInt(limit), offset: parseInt(offset), data: paginated,});
-
+    // response con el total correcto
+    response.json({
+      total: enrichedPhotos.length,
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      data: paginated,
+    });
+    
   } catch (error) {
     console.error("Error processing request:", error.message);
     response.status(500).json({ error: "Error processing request" });
