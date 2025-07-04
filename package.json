@@ -2,6 +2,8 @@
   "name": "relish_technical_test",
   "private": true,
   "scripts": {
-    "build": "cd webapp && npm install && npm run build"
+    "build": "npm run install-all && npm run build-all",
+    "install-all": "cd api_endpoint && npm install && cd ../webapp && npm install",
+    "build-all": "cd webapp && npm run build"
   }
 }
