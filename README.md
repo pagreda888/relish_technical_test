@@ -2,6 +2,8 @@
 # relish_technical_test
 Technical test for Mid Support Engineer position at Relish
 
+This project consists in the creation of and endpoint that merges data from 3 individual endpoints, it collects photos, albums, and users information, then this enriched endpoint is served to a web app that shows the data to the user in its frontend.
+
 
 ## Online Access
 - App: https://relish-technical-test.vercel.app/
