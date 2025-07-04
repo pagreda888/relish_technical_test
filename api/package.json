@@ -1,0 +1,10 @@
+{
+  "name": "api-serverless-entrypoint",
+  "private": true,
+  "dependencies": {
+    "express": "^5.1.0",
+    "axios": "^1.10.0",
+    "dotenv": "^17.0.0",
+    "serverless-http": "^3.2.0"
+  }
+}
