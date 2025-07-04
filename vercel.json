@@ -4,5 +4,6 @@
       "source": "/externalapi/:match*",
       "destination": "/api/api/index.js"
     }
-  ]
+  ],
+  "outputDirectory": "webapp/dist"
 }
