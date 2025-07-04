@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
-const API_URL = 'http://localhost:8888/externalapi/photos';
+const API_URL = '/externalapi/photos';
 
 function App() {
   // State for popup user details
