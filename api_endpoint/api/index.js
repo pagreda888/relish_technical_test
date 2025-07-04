@@ -1,4 +1,3 @@
-const app = require('../app');
-const serverless = require('serverless-http');
 
-module.exports = serverless(app);
+// Archivo movido a /api/index.js en la raíz del proyecto para Vercel
+// Este archivo ya no es necesario y puede ser eliminado.
